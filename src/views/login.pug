@@ -6,4 +6,8 @@ html(lang="en")
     meta(http-equiv="X-UA-Compatible", content="ie=edge")
     title 로그인 | 가게부
   body
-    t1= title
+    h1= title
+    form(action="/login" method="post")
+      input(type="text" name="username" placeholder="username")
+      input(type="password" name="password" placeholder="password")
+      button(type="submit") 로그인
