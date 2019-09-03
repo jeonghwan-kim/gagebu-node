@@ -4,7 +4,9 @@ const morgan = require('morgan')
 const session = require('express-session')
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
+const flash = require('connect-flash')
 const app = express()
+const debug = require('debug')('gagebu')
 
 const users = [{id: 1, username: 'alice', password: 'qwer1234'}]
 
@@ -22,13 +24,13 @@ passport.use(new LocalStrategy((username, password, done) => {
   const user = users.find(user => user.username === username)
   if (!user) {
     return done(null, false, {
-      message: `username '${username}' not found.`
+      message: `사용자 이름('${username}')을 찾을수 없습니다.`
     })
   }
 
   if (user.password !== password) {
     return done(null, false, {
-      message: 'password incorrect'
+      message: '비밀번호가 맞지 않습니다.'
     })
   }
 
@@ -49,20 +51,27 @@ app.use(session({
 }))
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(flash())
 
 app.get('/', (req, res) => {
   res.render('home', {title: '홈'})
 })
 
 app.get('/login', (req, res) => {
-  res.render('login', {title: '로그인'})
+  res.render('login', {
+    title: '로그인', 
+    error: req.flash('error')
+  })
 })
 
 app.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) return next(err)
 
-    if (!user) return res.json(info)
+    if (!user) {
+      req.flash('error', info.message)
+      return res.redirect('/login')
+    }
 
     req.logIn(user, (err) => {
       if (err) return next(err)

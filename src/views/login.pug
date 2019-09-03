@@ -11,3 +11,5 @@ html(lang="en")
       input(type="text" name="username" placeholder="username")
       input(type="password" name="password" placeholder="password")
       button(type="submit") 로그인
+    - if (error)
+      p= error
