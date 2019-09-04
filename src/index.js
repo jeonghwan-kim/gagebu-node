@@ -37,6 +37,12 @@ passport.use(new LocalStrategy((username, password, done) => {
   done(null, user)
 }))
 
+const isAuthenticated = (req, res, next) => {
+  req.isAuthenticated()
+    ? next()
+    : res.sendStatus(401)
+}
+
 
 app.set('view engine', 'pug')
 app.set('views', path.resolve(__dirname, 'views'))
@@ -84,31 +90,31 @@ app.get('/logout', (req, res) => {
   res.send('logout')
 })
 
-app.get('/expenses', (req, res) => {
+app.get('/expenses', isAuthenticated, (req, res) => {
   res.render('home', {title: '지출목록'})
 })
 
-app.get('/expenses/add', (req, res) => {
+app.get('/expenses/add', isAuthenticated, (req, res) => {
   res.render('home', {
     title: '지출 추가'
   })
 })
 
-app.post('/expenses/add', (req, res) => {
+app.post('/expenses/add', isAuthenticated, (req, res) => {
   res.send('지출 추가 api')
 })
 
-app.get('/expenses/:id/edit', (req, res) => {
+app.get('/expenses/:id/edit', isAuthenticated, (req, res) => {
   res.render('home', {
     title: '지출 수정'
   })
 })
 
-app.post('/expenses/:id/edit', (req, res) => {
+app.post('/expenses/:id/edit', isAuthenticated, (req, res) => {
   res.send('지출 수정 api:' + req.params.id)
 })
 
-app.post('/expenses/:id/delete', (req, res) => {
+app.post('/expenses/:id/delete', isAuthenticated, (req, res) => {
   res.send('지출 삭제 api:' + req.params.id)
 })
 
