@@ -87,7 +87,8 @@ app.post('/login', (req, res, next) => {
 })
 
 app.get('/logout', (req, res) => {
-  res.send('logout')
+  req.logout()
+  res.redirect('/')
 })
 
 app.get('/expenses', isAuthenticated, (req, res) => {
